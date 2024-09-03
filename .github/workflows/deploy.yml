@@ -1,0 +1,23 @@
+name: Deploy Application
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    uses: nikolay-e/reusable-workflows/.github/workflows/docker-build-deploy-vps.yml@main
+    with:
+      image_name: touch-typing-com
+      container_port: 8446
+      domain: touch-typing.nikolay-eremeev.com
+      docker_context: .
+      docker_file: Dockerfile
+    secrets:
+      DOCKER_REGISTRY_USERNAME: ${{ secrets.DOCKER_REGISTRY_USERNAME }}
+      DOCKER_REGISTRY_TOKEN: ${{ secrets.DOCKER_REGISTRY_TOKEN }}
+      VPS_SSH_PRIVATE_KEY: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
+      VPS_HOST: ${{ secrets.VPS_HOST }}
+      VPS_USER: ${{ secrets.VPS_USER }}
+      SSL_CERT: ${{ secrets.SSL_CERT }}
+      SSL_KEY: ${{ secrets.SSL_KEY }}
