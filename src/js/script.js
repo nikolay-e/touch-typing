@@ -1,10 +1,14 @@
-const lowercaseLetters = 'abcdefghijklmnopqrstuvwxyz';
-const uppercaseLetters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+const englishLetters = 'abcdefghijklmnopqrstuvwxyz';
+const russianLetters = 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя';
 const numbers = '0123456789';
 const specialChars = '!@#$%^&*()_+-={}[]|\\:;"\'<>,.?/~`';
+
+let currentLanguage = 'english';
 let characters = '';
 let currentCharacter = '';
-let allPossibleCharacters = lowercaseLetters + uppercaseLetters + numbers + specialChars;
+let allPossibleCharacters = englishLetters + englishLetters.toUpperCase() + 
+                            russianLetters + russianLetters.toUpperCase() + 
+                            numbers + specialChars;
 let correctCount = 0;
 let totalCount = 0;
 let startTime = 0;
@@ -30,7 +34,7 @@ function initializeCharacterStats(charSet) {
     });
 }
 
-initializeCharacterStats(lowercaseLetters + uppercaseLetters + numbers + specialChars);
+initializeCharacterStats(allPossibleCharacters);
 
 const characterDisplay = document.getElementById('letter-display');
 const resultDisplay = document.getElementById('result');
@@ -38,6 +42,7 @@ const quickStatsDisplay = document.getElementById('quick-stats');
 const statsDisplay = document.getElementById('stats-display');
 const toggleStatsButton = document.getElementById('toggle-stats');
 const statsContainer = document.getElementById('stats-container');
+const toggleLanguageButton = document.getElementById('toggle-language');
 
 // Create toggle buttons for each mode
 const modeButtons = {};
@@ -45,7 +50,7 @@ const modeButtons = {};
     const button = document.createElement('button');
     button.textContent = `${mode.charAt(0).toUpperCase() + mode.slice(1)}: ${modes[mode] ? 'On' : 'Off'}`;
     button.id = `toggle-${mode}`;
-    document.querySelector('.container').appendChild(button);
+    document.querySelector('#mode-buttons').appendChild(button);
     modeButtons[mode] = button;
 
     button.addEventListener('click', () => {
@@ -55,16 +60,26 @@ const modeButtons = {};
     });
 });
 
+toggleLanguageButton.addEventListener('click', () => {
+    currentLanguage = currentLanguage === 'english' ? 'russian' : 'english';
+    toggleLanguageButton.textContent = `Language: ${currentLanguage.charAt(0).toUpperCase() + currentLanguage.slice(1)}`;
+    updateCharacterSet();
+});
+
 function updateCharacterSet() {
     characters = '';
-    if (modes.lowercase) characters += lowercaseLetters;
-    if (modes.uppercase) characters += uppercaseLetters;
+    const letters = currentLanguage === 'english' ? englishLetters : russianLetters;
+    if (modes.lowercase) characters += letters;
+    if (modes.uppercase) characters += letters.toUpperCase();
     if (modes.numbers) characters += numbers;
     if (modes.special) characters += specialChars;
     
     if (characters === '') {
         characterDisplay.textContent = 'Select a mode';
+        characterDisplay.style.backgroundColor = '#ffcccc';  // Light red background
+        currentCharacter = '';
     } else {
+        characterDisplay.style.backgroundColor = '';  // Reset background
         setNewCharacter();
     }
 }
@@ -92,7 +107,6 @@ function updateQuickStats() {
         Accuracy: ${accuracy}% | Average Time: ${averageTime} ms
     `;
 }
-
 
 function updateDetailedStats() {
     const averageTime = totalCount > 0 ? totalTime / totalCount : 0;
@@ -204,35 +218,6 @@ document.addEventListener('keydown', (event) => {
         setTimeout(setNewCharacter, 100);
     }
 });
-
-function updateCharacterSet() {
-    characters = '';
-    if (modes.lowercase) characters += lowercaseLetters;
-    if (modes.uppercase) characters += uppercaseLetters;
-    if (modes.numbers) characters += numbers;
-    if (modes.special) characters += specialChars;
-    
-    if (characters === '') {
-        characterDisplay.textContent = 'Select a mode';
-        characterDisplay.style.backgroundColor = '#ffcccc';  // Light red background
-        currentCharacter = '';
-    } else {
-        characterDisplay.style.backgroundColor = '';  // Reset background
-        setNewCharacter();
-    }
-}
-
-function setNewCharacter() {
-    if (characters.length > 0) {
-        currentCharacter = getRandomCharacter();
-        characterDisplay.textContent = currentCharacter;
-        characterDisplay.style.color = 'black';
-        startTime = Date.now();
-    } else {
-        characterDisplay.textContent = 'Select a mode';
-        currentCharacter = '';
-    }
-}
 
 updateCharacterSet();
 updateQuickStats();

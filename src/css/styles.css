@@ -127,7 +127,7 @@ h1 {
     background-color: #45a049;
 }
 
-#toggle-mode {
+#toggle-mode, #toggle-language {
     margin-top: 0.5rem;
     padding: 0.3rem 0.8rem;
     background-color: #4CAF50;
@@ -139,7 +139,7 @@ h1 {
     font-size: 0.9rem;
 }
 
-#toggle-mode:hover {
+#toggle-mode:hover, #toggle-language:hover {
     background-color: #45a049;
 }
 
