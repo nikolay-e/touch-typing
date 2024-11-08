@@ -1,0 +1,15 @@
+<div id="character-display"
+     class="letter-display"
+     hx-trigger="keydown from:body"
+     hx-post="/check-char"
+     hx-vals='js:{
+        "char": event.key,
+        "startTime": new Date().toISOString()
+     }'
+     hx-swap="outerHTML">
+    {{if .Characters}}
+    {{.CurrentChar}}
+    {{else}}
+    Select a mode
+    {{end}}
+</div>

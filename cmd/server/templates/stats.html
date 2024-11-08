@@ -1,0 +1,77 @@
+<div class="stats-section">
+    <h2>Overall Statistics</h2>
+    <table class="stats-table">
+        <thead>
+        <tr>
+            <th>Total Characters</th>
+            <th>Correct Characters</th>
+            <th>Accuracy</th>
+            <th>Average Time per Character</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>{{.Stats.TotalCount}}</td>
+            <td>{{.Stats.CorrectCount}}</td>
+            <td>
+                {{if gt .Stats.TotalCount 0}}
+                {{printf "%.2f" (multiply (divide .Stats.CorrectCount .Stats.TotalCount) 100)}}%
+                {{else}}
+                0.00%
+                {{end}}
+            </td>
+            <td>
+                {{if gt .Stats.TotalCount 0}}
+                {{printf "%.2f" (divide .Stats.TotalTime .Stats.TotalCount)}} ms
+                {{else}}
+                0.00 ms
+                {{end}}
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <h2>Character Statistics</h2>
+    <table class="stats-table">
+        <thead>
+        <tr>
+            <th>Character</th>
+            <th>Attempts</th>
+            <th>Correct</th>
+            <th>Incorrect</th>
+            <th>Accuracy</th>
+            <th>Avg Time</th>
+            <th>Most Confused With</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{range $char, $stats := .Stats.CharStats}}
+        {{if gt $stats.Total 0}}
+        <tr>
+            <td>{{if eq $char " "}}Space{{else}}{{$char}}{{end}}</td>
+            <td>{{$stats.Total}}</td>
+            <td>{{$stats.Correct}}</td>
+            <td>{{$stats.Incorrect}}</td>
+            <td>{{printf "%.2f" (multiply (divide $stats.Correct $stats.Total) 100)}}%</td>
+            <td>{{printf "%.2f" (divide $stats.TotalTime $stats.Total)}} ms</td>
+            <td>
+                {{$maxCount := 0}}
+                {{$maxChar := ""}}
+                {{range $confused, $count := $stats.ConfusedWith}}
+                {{if gt $count $maxCount}}
+                {{$maxCount = $count}}
+                {{$maxChar = $confused}}
+                {{end}}
+                {{end}}
+                {{if $maxChar}}
+                {{if eq $maxChar " "}}Space{{else}}{{$maxChar}}{{end}} ({{$maxCount}})
+                {{else}}
+                None
+                {{end}}
+            </td>
+        </tr>
+        {{end}}
+        {{end}}
+        </tbody>
+    </table>
+</div>

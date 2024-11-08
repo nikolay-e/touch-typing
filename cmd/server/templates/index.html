@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Touch Typing Practice</title>
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <!-- Fixed CSS path -->
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+<div class="container">
+    <h1>Touch Typing Practice</h1>
+    {{template "character.html" .}}
+
+    <div id="result" class="result"></div>
+    <div id="quick-stats" class="quick-stats">
+        {{if gt .Stats.TotalCount 0}}
+        Accuracy: {{printf "%.2f" (multiply (divide .Stats.CorrectCount .Stats.TotalCount) 100)}}% |
+        Average Time: {{printf "%.2f" (divide .Stats.TotalTime .Stats.TotalCount)}} ms
+        {{else}}
+        Accuracy: 0.00% | Average Time: 0.00 ms
+        {{end}}
+    </div>
+
+    <div class="mode-buttons">
+        <button hx-get="/toggle-mode?mode=lowercase"
+                hx-target="#character-display"
+                class="mode-button">
+            Lowercase: {{if .Modes.Lowercase}}On{{else}}Off{{end}}
+        </button>
+        <button hx-get="/toggle-mode?mode=uppercase"
+                hx-target="#character-display"
+                class="mode-button">
+            Uppercase: {{if .Modes.Uppercase}}On{{else}}Off{{end}}
+        </button>
+        <button hx-get="/toggle-mode?mode=numbers"
+                hx-target="#character-display"
+                class="mode-button">
+            Numbers: {{if .Modes.Numbers}}On{{else}}Off{{end}}
+        </button>
+        <button hx-get="/toggle-mode?mode=special"
+                hx-target="#character-display"
+                class="mode-button">
+            Special: {{if .Modes.Special}}On{{else}}Off{{end}}
+        </button>
+    </div>
+
+    <button hx-get="/toggle-language"
+            hx-target="#character-display"
+            class="toggle-language">
+        Language: {{.CurrentLang}}
+    </button>
+
+    <button hx-get="/get-stats"
+            hx-target="#stats-container"
+            hx-swap="innerHTML"
+            class="toggle-stats">
+        Show Detailed Stats
+    </button>
+</div>
+
+<div id="stats-container" class="stats-container hidden"></div>
+</body>
+</html>
