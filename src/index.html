@@ -3,22 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Touch Typing</title>
+    <title>Touch Typing Practice</title>
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
     <div class="container">
         <h1>Touch Typing Practice</h1>
-        <div id="letter-display" class="letter-display">Press any key to start</div>
+        <div id="letter-display" class="letter-display">Loading...</div>
         <div id="result" class="result"></div>
-        <div id="quick-stats" class="quick-stats"></div>
-        <button id="toggle-stats" class="toggle-stats">Show Detailed Stats</button>
-        <div id="mode-buttons"></div>
+        <div id="quick-stats" class="quick-stats">WPM: 0 | Accuracy: 0.0% | Avg Time: 0 ms</div>
+        <div id="mode-buttons">
+            </div>
         <button id="toggle-language" class="toggle-mode">Language: English</button>
+        <button id="toggle-stats" class="toggle-stats">Show Detailed Stats</button>
     </div>
+
+    <div id="keyboard-container" class="keyboard-container">
+        </div>
+
     <div id="stats-container" class="stats-container hidden">
-        <div id="stats-display" class="stats-display"></div>
+        <div id="stats-display" class="stats-display">
+             </div>
     </div>
-    <script src="js/script.js"></script>
+
+    <script type="module" src="js/app.js"></script>
+
 </body>
 </html>
