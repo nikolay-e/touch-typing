@@ -1,5 +1,41 @@
 // src/js/config.js
 
+// --- Timing Constants ---
+export const TIMING_CONSTANTS = {
+    MIN_WPM_ELAPSED_TIME: 0.005, // minutes - minimum elapsed time before calculating WPM
+    NEW_TARGET_DELAY: 80, // ms - delay before showing next character/n-gram
+    KEY_ANIMATION_DURATION: 100, // ms - duration of key press animation
+    ERROR_SHAKE_DURATION: 300, // ms - duration of error shake animation
+    RESULT_COLOR_RESET_DELAY: 600, // ms - delay before resetting result display color
+    DEBOUNCE_SAVE_DELAY: 1000, // ms - delay for debounced localStorage save
+};
+
+// --- Statistical Constants ---
+export const STATS_CONSTANTS = {
+    OUTLIER_LOWER_PERCENTILE: 25, // Discard times below 25th percentile
+    OUTLIER_UPPER_PERCENTILE: 75, // Discard times above 75th percentile
+    MIN_SAMPLES_FOR_OUTLIER_DETECTION: 10, // Minimum samples before applying outlier detection
+    MAX_REASONABLE_TIME: 10000, // ms - maximum reasonable time for any keypress
+    MIN_REASONABLE_TIME: 50, // ms - minimum reasonable time for any keypress
+};
+
+// --- Display Constants ---
+export const DISPLAY_CONSTANTS = {
+    WPM_WORD_LENGTH: 5, // characters - standard word length for WPM calculation
+    MIN_LETTER_DISPLAY_HEIGHT: 80, // px - minimum height for letter display
+    MIN_LETTER_DISPLAY_HEIGHT_MOBILE: 60, // px - minimum height on mobile
+    MIN_LETTER_DISPLAY_HEIGHT_SMALL: 50, // px - minimum height on very small devices
+};
+
+// --- Keyboard Constants ---
+export const KEYBOARD_CONSTANTS = {
+    MIN_KEY_WIDTH: 40, // px - minimum width for regular keys
+    MIN_KEY_HEIGHT: 40, // px - minimum height for regular keys
+    MIN_KEY_WIDTH_MOBILE: 26, // px - minimum width on mobile
+    MIN_KEY_HEIGHT_MOBILE: 26, // px - minimum height on mobile
+    SPACE_KEY_WIDTH_RATIO: 6.25, // ratio to regular key width
+};
+
 // --- Character Sets ---
 export const englishLetters = 'abcdefghijklmnopqrstuvwxyz';
 export const russianLetters = 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя';

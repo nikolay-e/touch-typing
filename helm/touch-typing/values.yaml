@@ -1,0 +1,103 @@
+# Default values for touch-typing
+# This is a YAML-formatted file.
+
+# Namespace configuration
+# Using a dedicated namespace to avoid conflicts with other deployments
+namespace: touch-typing
+
+replicaCount: 1
+
+image:
+  repository: nikolajer/touch-typing
+  pullPolicy: Always
+  # Overridden by CI with specific tag
+  tag: "latest"
+
+nameOverride: ""
+fullnameOverride: ""
+
+service:
+  type: ClusterIP
+  port: 80
+
+# Resources for the static web application
+resources:
+  limits:
+    cpu: 100m
+    memory: 128Mi
+  requests:
+    cpu: 50m
+    memory: 64Mi
+
+# Ingress configuration
+ingress:
+  enabled: true
+  className: traefik
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
+    traefik.ingress.kubernetes.io/router.tls: "true"
+  hosts:
+    - host: touch-typing.nikolay-eremeev.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: touch-typing-tls
+      hosts:
+        - touch-typing.nikolay-eremeev.com
+
+# Autoscaling (optional)
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 3
+  targetCPUUtilizationPercentage: 80
+  targetMemoryUtilizationPercentage: 80
+
+# Pod Security Context
+podSecurityContext:
+  fsGroup: 101
+  runAsNonRoot: true
+  runAsUser: 101
+
+# Container Security Context
+securityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  runAsUser: 101
+  capabilities:
+    drop:
+    - ALL
+
+# Service Account
+serviceAccount:
+  create: false
+  annotations: {}
+  name: ""
+
+# Node selector, tolerations, and affinity
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+# Probes configuration
+probes:
+  liveness:
+    httpGet:
+      path: /
+      port: http
+    initialDelaySeconds: 10
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 3
+  readiness:
+    httpGet:
+      path: /
+      port: http
+    initialDelaySeconds: 5
+    periodSeconds: 5
+    timeoutSeconds: 3
+    successThreshold: 1
+    failureThreshold: 3

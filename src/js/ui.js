@@ -1,5 +1,5 @@
 // src/js/ui.js
-import { keyboardLayouts, standardSpecialChars, shiftSpecialCharsEng, keyMap as configKeyMap } from './config.js';
+import { keyboardLayouts, standardSpecialChars, shiftSpecialCharsEng, keyMap as configKeyMap, TIMING_CONSTANTS } from './config.js';
 import * as stats from './stats.js';
 
 // --- DOM Elements ---
@@ -118,6 +118,12 @@ export function generateKeyboard(language) {
 
 /** Highlights the specified character's key(s) on the visual keyboard. */
 export function highlightKey(char, keyMap = configKeyMap) {
+    // Input validation
+    if (typeof char !== 'string' && char !== null && char !== undefined) {
+        console.warn('Invalid character type provided to highlightKey:', typeof char);
+        return;
+    }
+    
     // Clear previous highlights
     const previouslyHighlighted = elements.keyboardContainer.querySelectorAll('.key-highlight');
     previouslyHighlighted.forEach(el => el.classList.remove('key-highlight'));
@@ -166,7 +172,7 @@ export function pressKeyAnimation(dataKeyValue) {
     if (keyElement) {
         keyElement.classList.add('key-pressed');
         // Remove class after a short delay
-        setTimeout(() => keyElement.classList.remove('key-pressed'), 100);
+        setTimeout(() => keyElement.classList.remove('key-pressed'), TIMING_CONSTANTS.KEY_ANIMATION_DURATION);
     }
 }
 
@@ -177,12 +183,23 @@ export function errorKeyAnimation(expectedChar, keyMap = configKeyMap) {
      const targetKeyElement = elements.keyboardContainer.querySelector(`.key[data-key="${mappedKey}"]`);
      if (targetKeyElement) {
         targetKeyElement.classList.add('key-error-shake');
-        setTimeout(() => targetKeyElement.classList.remove('key-error-shake'), 300);
+        setTimeout(() => targetKeyElement.classList.remove('key-error-shake'), TIMING_CONSTANTS.ERROR_SHAKE_DURATION);
      }
 }
 
 /** Updates the main display area with the target character/n-gram and highlights the current key. */
 export function updateDisplayAndHighlight(target, position, isSequence, keyMap, resetStartTime = true) {
+    // Input validation
+    if (target !== null && typeof target !== 'string') {
+        console.error('Invalid target type in updateDisplayAndHighlight:', typeof target);
+        return;
+    }
+    
+    if (typeof position !== 'number' || position < 0) {
+        console.error('Invalid position in updateDisplayAndHighlight:', position);
+        return;
+    }
+    
     if (!target) {
         elements.characterDisplay.textContent = 'Select mode!';
         elements.characterDisplay.style.backgroundColor = '#ffcccc';
@@ -209,6 +226,17 @@ export function updateDisplayAndHighlight(target, position, isSequence, keyMap, 
 
 /** Updates the result display message (correct/incorrect) and colors. */
 export function updateResultDisplay(correct, timeTaken, expectedChar = null) {
+    // Input validation
+    if (typeof correct !== 'boolean') {
+        console.error('Invalid correct parameter in updateResultDisplay:', correct);
+        return;
+    }
+    
+    if (typeof timeTaken !== 'number' || timeTaken < 0 || !isFinite(timeTaken)) {
+        console.error('Invalid timeTaken in updateResultDisplay:', timeTaken);
+        timeTaken = 0;
+    }
+    
     let message = '';
     let color = '#555'; // Default color
 
@@ -228,11 +256,11 @@ export function updateResultDisplay(correct, timeTaken, expectedChar = null) {
 
      // Reset result color and target color (if error) after a delay
      setTimeout(() => {
-        elements.resultDisplay.style.color = '#555'; // Reset result color
+        elements.resultDisplay.style.color = ''; // Reset result color
         if (!correct) {
-           elements.characterDisplay.style.color = 'black'; // Reset target display color
+           elements.characterDisplay.style.color = ''; // Reset target display color
         }
-     }, 600);
+     }, TIMING_CONSTANTS.RESULT_COLOR_RESET_DELAY);
 }
 
 /** Updates the quick stats display (WPM, Accuracy, Avg Time). */
@@ -240,68 +268,203 @@ export function updateQuickStatsDisplay() {
     const currentWPM = stats.calculateWPM();
     const accuracy = stats.getOverallAccuracy().toFixed(1);
     const averageTime = stats.getAverageTimePerChar().toFixed(0);
-    elements.quickStatsDisplay.innerHTML = `
-        WPM: ${currentWPM} | Accuracy: ${accuracy}% | Avg Time: ${averageTime} ms
+    elements.quickStatsDisplay.textContent = `WPM: ${currentWPM} | Accuracy: ${accuracy}% | Avg Time: ${averageTime} ms`;
+}
+
+/**
+ * Updates the character coverage display for debugging smart selection
+ * @param {object} characterCoverage - Coverage tracking object
+ * @param {object} sessionTargetCount - Session count tracking object
+ * @param {array} currentCharacterSet - Current practice set
+ */
+export function updateCoverageDisplay(characterCoverage, sessionTargetCount, currentCharacterSet) {
+    try {
+        // Input validation
+        if (!characterCoverage || !sessionTargetCount || !currentCharacterSet) {
+            return;
+        }
+        
+        // Only show if stats are visible
+        if (!elements.statsContainer || elements.statsContainer.classList.contains('hidden')) {
+            return;
+        }
+    
+    // Find or create coverage section
+    let coverageSection = document.querySelector('.coverage-section');
+    if (!coverageSection) {
+        coverageSection = document.createElement('div');
+        coverageSection.className = 'stats-section coverage-section';
+        
+        const heading = document.createElement('h2');
+        heading.textContent = 'Character Coverage & Selection';
+        coverageSection.appendChild(heading);
+        
+        const display = document.createElement('div');
+        display.id = 'coverage-display';
+        coverageSection.appendChild(display);
+        
+        // Insert at the beginning of stats display
+        elements.statsDisplay.insertBefore(coverageSection, elements.statsDisplay.firstChild);
+    }
+    
+    const coverageDisplay = document.getElementById('coverage-display');
+    if (!coverageDisplay) return;
+    
+    const totalChars = Array.isArray(currentCharacterSet) ? currentCharacterSet.length : 0;
+    const coveredChars = Object.keys(characterCoverage).length;
+    const coveragePercent = totalChars > 0 ? (coveredChars / totalChars * 100).toFixed(1) : 0;
+    
+    // Create coverage summary
+    let html = `
+        <div style="margin-bottom: 10px;">
+            <strong>Coverage:</strong> ${coveredChars}/${totalChars} characters (${coveragePercent}%)
+        </div>
     `;
+    
+    // Show character frequency in compact format
+    if (Object.keys(sessionTargetCount).length > 0) {
+        const sortedChars = Object.entries(sessionTargetCount)
+            .sort(([,a], [,b]) => b - a)
+            .slice(0, 10); // Show top 10 most frequent
+        
+        html += '<div style="font-size: 0.85em; margin-top: 8px;"><strong>Most Practiced:</strong><br>';
+        html += sortedChars.map(([char, count]) => 
+            `<span style="margin-right: 8px;">${escapeHTML(char === ' ' ? 'Space' : char)}:${count}</span>`
+        ).join('');
+        html += '</div>';
+    }
+    
+    // Show uncovered characters if any
+    const uncovered = currentCharacterSet.filter(char => !characterCoverage[char]);
+    if (uncovered.length > 0 && uncovered.length < 20) {
+        html += '<div style="font-size: 0.85em; margin-top: 8px; color: orange;"><strong>Not Yet Practiced:</strong> ';
+        html += uncovered.map(char => escapeHTML(char === ' ' ? 'Space' : char)).join(', ');
+        html += '</div>';
+    }
+    
+    coverageDisplay.innerHTML = html;
+    } catch (error) {
+        console.warn('Error updating coverage display:', error);
+    }
+}
+
+
+
+/**
+ * Safely escapes HTML characters to prevent XSS attacks
+ * @param {string} str - The string to escape
+ * @returns {string} - The escaped string
+ */
+function escapeHTML(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
 }
 
 /** Updates the detailed statistics table. */
 export function updateDetailedStatsDisplay() {
+    
+    // Update coverage display if available (will be called from app.js)
+    // This is handled separately to avoid circular dependencies
     const overallAccuracy = stats.getOverallAccuracy().toFixed(2);
     const overallAverageTime = stats.getAverageTimePerChar().toFixed(2);
-    let characterRows = '';
-
-    const sortedChars = Object.keys(stats.characterStats)
-                              .filter(char => stats.characterStats[char].total > 0)
-                              .sort();
-
-    sortedChars.forEach(char => {
-        const charStat = stats.characterStats[char];
-        if (charStat.total === 0) return;
-
-        const avgTime = (charStat.totalTime / charStat.total).toFixed(2);
-        const accuracy = (charStat.correct / charStat.total * 100).toFixed(2);
-
-        let mostConfusedChar = '-';
-        if (Object.keys(charStat.confusedWith).length > 0) {
-            const confusedKey = Object.keys(charStat.confusedWith)
-                                     .reduce((a, b) => charStat.confusedWith[a] > charStat.confusedWith[b] ? a : b);
-            const maxConfusion = charStat.confusedWith[confusedKey];
-            mostConfusedChar = `${confusedKey === ' ' ? 'Space' : confusedKey} (${maxConfusion})`;
-        }
-
-        characterRows += `
-            <tr>
-                <td>${char === ' ' ? 'Space' : char}</td>
-                <td>${charStat.total}</td>
-                <td>${charStat.correct}</td>
-                <td>${charStat.incorrect}</td>
-                <td>${accuracy}%</td>
-                <td>${avgTime} ms</td>
-                <td>${mostConfusedChar}</td>
-            </tr>
-        `;
-    });
-
+    
+    // Clear existing content
+    elements.statsDisplay.innerHTML = '';
+    
     if (stats.totalCount > 0) {
-        elements.statsDisplay.innerHTML = `
-            <div class="stats-section">
-                <h2>Overall Statistics</h2>
-                <table class="stats-table">
-                    <thead><tr><th>WPM</th><th>Total Typed</th><th>Correct</th><th>Accuracy</th><th>Average Time per Char</th></tr></thead>
-                    <tbody><tr><td>${stats.wpm}</td><td>${stats.totalCount}</td><td>${stats.correctCount}</td><td>${overallAccuracy}%</td><td>${overallAverageTime} ms</td></tr></tbody>
-                </table>
-            </div>
-            <div class="stats-section">
-                <h2>Individual Character Statistics</h2>
-                <table class="stats-table">
-                    <thead><tr><th>Character</th><th>Attempts</th><th>Correct</th><th>Incorrect</th><th>Accuracy</th><th>Avg Time (ms)</th><th>Most Confused With (count)</th></tr></thead>
-                    <tbody>${characterRows}</tbody>
-                </table>
-            </div>
+        // Create overall statistics section
+        const overallSection = document.createElement('div');
+        overallSection.className = 'stats-section';
+        
+        const overallHeading = document.createElement('h2');
+        overallHeading.textContent = 'Overall Statistics';
+        overallSection.appendChild(overallHeading);
+        
+        // Get outlier statistics
+        const outlierStats = stats.getOutlierStats();
+        
+        const overallTable = document.createElement('table');
+        overallTable.className = 'stats-table';
+        overallTable.innerHTML = `
+            <thead><tr><th>WPM</th><th>Total Typed</th><th>Correct</th><th>Accuracy</th><th>Average Time per Char</th><th>Outliers Filtered</th></tr></thead>
+            <tbody><tr>
+                <td>${escapeHTML(String(stats.wpm))}</td>
+                <td>${escapeHTML(String(stats.totalCount))}</td>
+                <td>${escapeHTML(String(stats.correctCount))}</td>
+                <td>${escapeHTML(overallAccuracy)}%</td>
+                <td>${escapeHTML(overallAverageTime)} ms</td>
+                <td>${escapeHTML(String(outlierStats.totalOutliers))} (${escapeHTML(outlierStats.overallOutlierRate)}%)</td>
+            </tr></tbody>
         `;
+        overallSection.appendChild(overallTable);
+        elements.statsDisplay.appendChild(overallSection);
+        
+        // Create character statistics section
+        const charSection = document.createElement('div');
+        charSection.className = 'stats-section';
+        
+        const charHeading = document.createElement('h2');
+        charHeading.textContent = 'Individual Character Statistics';
+        charSection.appendChild(charHeading);
+        
+        const charTable = document.createElement('table');
+        charTable.className = 'stats-table';
+        
+        // Create table header
+        const thead = document.createElement('thead');
+        thead.innerHTML = '<tr><th>Character</th><th>Attempts</th><th>Correct</th><th>Incorrect</th><th>Accuracy</th><th>Avg Time (ms)</th><th>Outliers</th><th>Most Confused With (count)</th></tr>';
+        charTable.appendChild(thead);
+        
+        // Create table body with character rows
+        const tbody = document.createElement('tbody');
+        
+        const sortedChars = Object.keys(stats.characterStats)
+                                  .filter(char => stats.characterStats[char].total > 0)
+                                  .sort();
+        
+        sortedChars.forEach(char => {
+            const charStat = stats.characterStats[char];
+            if (charStat.total === 0) return;
+            
+            const avgTime = (charStat.totalTime / charStat.total).toFixed(2);
+            const accuracy = (charStat.correct / charStat.total * 100).toFixed(2);
+            
+            let mostConfusedChar = '-';
+            let mostConfusedCount = '';
+            if (Object.keys(charStat.confusedWith).length > 0) {
+                const confusedKey = Object.keys(charStat.confusedWith)
+                                         .reduce((a, b) => charStat.confusedWith[a] > charStat.confusedWith[b] ? a : b);
+                const maxConfusion = charStat.confusedWith[confusedKey];
+                mostConfusedChar = confusedKey === ' ' ? 'Space' : confusedKey;
+                mostConfusedCount = ` (${maxConfusion})`;
+            }
+            
+            // Get outlier count
+            const outlierCount = charStat.outlierCount || 0;
+            const outlierDisplay = outlierCount > 0 ? String(outlierCount) : '-';
+            
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${escapeHTML(char === ' ' ? 'Space' : char)}</td>
+                <td>${escapeHTML(String(charStat.total))}</td>
+                <td>${escapeHTML(String(charStat.correct))}</td>
+                <td>${escapeHTML(String(charStat.incorrect))}</td>
+                <td>${escapeHTML(accuracy)}%</td>
+                <td>${escapeHTML(avgTime)} ms</td>
+                <td>${escapeHTML(outlierDisplay)}</td>
+                <td>${escapeHTML(mostConfusedChar)}${escapeHTML(mostConfusedCount)}</td>
+            `;
+            tbody.appendChild(row);
+        });
+        
+        charTable.appendChild(tbody);
+        charSection.appendChild(charTable);
+        elements.statsDisplay.appendChild(charSection);
     } else {
-         elements.statsDisplay.innerHTML = '<p>No statistics yet. Start typing!</p>';
+        const noStatsMsg = document.createElement('p');
+        noStatsMsg.textContent = 'No statistics yet. Start typing!';
+        elements.statsDisplay.appendChild(noStatsMsg);
     }
 }
 
@@ -309,8 +472,12 @@ export function updateDetailedStatsDisplay() {
 export function toggleStatsVisibility() {
     const isHidden = elements.statsContainer.classList.toggle('hidden');
     elements.toggleStatsButton.textContent = isHidden ? 'Show Detailed Stats' : 'Hide Detailed Stats';
+    elements.toggleStatsButton.setAttribute('aria-expanded', !isHidden);
     if (!isHidden) { // Update stats when shown
         updateDetailedStatsDisplay();
+        // Move focus to stats for screen reader users
+        elements.statsContainer.setAttribute('tabindex', '-1');
+        elements.statsContainer.focus();
     }
 }
 
@@ -318,3 +485,7 @@ export function toggleStatsVisibility() {
 export function updateLanguageButtonText(language) {
      elements.toggleLanguageButton.textContent = `Language: ${language.charAt(0).toUpperCase() + language.slice(1)}`;
 }
+
+
+
+
