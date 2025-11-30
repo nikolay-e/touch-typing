@@ -1,59 +1,159 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Touch Typing Practice - Free Online Typing Trainer</title>
-    <meta name="description" content="Free online touch typing practice tool supporting English and Russian keyboards. Improve your typing speed and accuracy with customizable practice modes, real-time statistics, and visual keyboard display.">
-    <meta name="keywords" content="touch typing, typing practice, typing trainer, keyboard training, WPM, typing speed, typing accuracy, English typing, Russian typing">
-    <meta name="author" content="Touch Typing Practice">
-    
+    <meta
+      name="description"
+      content="Free online touch typing practice tool supporting English and Russian keyboards. Improve your typing speed and accuracy with customizable practice modes, real-time statistics, and visual keyboard display."
+    />
+    <meta
+      name="keywords"
+      content="touch typing, typing practice, typing trainer, keyboard training, WPM, typing speed, typing accuracy, English typing, Russian typing"
+    />
+    <meta name="author" content="Touch Typing Practice" />
+
     <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="Touch Typing Practice - Free Online Typing Trainer">
-    <meta property="og:description" content="Improve your typing speed and accuracy with our free online typing practice tool. Supports English and Russian keyboards.">
-    
+    <meta property="og:type" content="website" />
+    <meta
+      property="og:title"
+      content="Touch Typing Practice - Free Online Typing Trainer"
+    />
+    <meta
+      property="og:description"
+      content="Improve your typing speed and accuracy with our free online typing practice tool. Supports English and Russian keyboards."
+    />
+
     <!-- Twitter -->
-    <meta property="twitter:card" content="summary">
-    <meta property="twitter:title" content="Touch Typing Practice - Free Online Typing Trainer">
-    <meta property="twitter:description" content="Improve your typing speed and accuracy with our free online typing practice tool.">
-    
+    <meta property="twitter:card" content="summary" />
+    <meta
+      property="twitter:title"
+      content="Touch Typing Practice - Free Online Typing Trainer"
+    />
+    <meta
+      property="twitter:description"
+      content="Improve your typing speed and accuracy with our free online typing practice tool."
+    />
+
     <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%234CAF50'/%3E%3Ctext x='50' y='50' font-family='Arial' font-size='60' font-weight='bold' text-anchor='middle' dominant-baseline='middle' fill='white'%3ET%3C/text%3E%3C/svg%3E">
-    
-    <link rel="stylesheet" href="css/styles.css">
-</head>
-<body>
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%234CAF50'/%3E%3Ctext x='50' y='50' font-family='Arial' font-size='60' font-weight='bold' text-anchor='middle' dominant-baseline='middle' fill='white'%3ET%3C/text%3E%3C/svg%3E"
+    />
+
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
     <a href="#letter-display" class="skip-link">Skip to typing practice</a>
     <div class="container">
-        <h1>Touch Typing Practice</h1>
-        <div id="letter-display" class="letter-display" role="status" aria-live="polite" aria-label="Current character or sequence to type">Loading...</div>
-        <div id="result" class="result" role="status" aria-live="polite" aria-label="Typing result feedback"></div>
-        <div id="quick-stats" class="quick-stats" role="status" aria-live="polite" aria-label="Current typing statistics">WPM: 0 | Accuracy: 0.0% | Avg Time: 0 ms</div>
-        
-        
-        <div id="mode-buttons" role="group" aria-label="Practice mode selection">
-            </div>
-        <button id="toggle-language" class="toggle-mode" aria-label="Toggle keyboard language">Language: English</button>
-        <button id="toggle-stats" class="toggle-stats" aria-label="Toggle detailed statistics view" aria-expanded="false" aria-controls="stats-container">Show Detailed Stats</button>
-        <button id="toggle-theme" class="toggle-theme" aria-label="Toggle dark mode">🌙 Dark Mode</button>
-        
-        <div class="data-management" role="group" aria-label="Data management controls">
-            <button id="export-data" class="data-button" aria-label="Export your typing statistics and progress data as a JSON file">📤 Export Data</button>
-            <button id="import-data" class="data-button" aria-label="Import typing statistics from a previously exported JSON file">📥 Import Data</button>
-            <input type="file" id="import-file" accept=".json" style="display: none;" aria-label="Select JSON file to import">
-        </div>
+      <h1>Touch Typing Practice</h1>
+      <div
+        id="letter-display"
+        class="letter-display"
+        role="status"
+        aria-live="polite"
+        aria-label="Current character or sequence to type"
+      >
+        Loading...
+      </div>
+      <div
+        id="result"
+        class="result"
+        role="status"
+        aria-live="polite"
+        aria-label="Typing result feedback"
+      ></div>
+      <div
+        id="quick-stats"
+        class="quick-stats"
+        role="status"
+        aria-live="polite"
+        aria-label="Current typing statistics"
+      >
+        WPM: 0 | Accuracy: 0.0% | Avg Time: 0 ms
+      </div>
+
+      <div
+        id="mode-buttons"
+        role="group"
+        aria-label="Practice mode selection"
+      ></div>
+      <button
+        id="toggle-language"
+        class="toggle-mode"
+        aria-label="Toggle keyboard language"
+      >
+        Language: English
+      </button>
+      <button
+        id="toggle-stats"
+        class="toggle-stats"
+        aria-label="Toggle detailed statistics view"
+        aria-expanded="false"
+        aria-controls="stats-container"
+      >
+        Show Detailed Stats
+      </button>
+      <button
+        id="toggle-theme"
+        class="toggle-theme"
+        aria-label="Toggle dark mode"
+      >
+        🌙 Dark Mode
+      </button>
+
+      <div
+        class="data-management"
+        role="group"
+        aria-label="Data management controls"
+      >
+        <button
+          id="export-data"
+          class="data-button"
+          aria-label="Export your typing statistics and progress data as a JSON file"
+        >
+          📤 Export Data
+        </button>
+        <button
+          id="import-data"
+          class="data-button"
+          aria-label="Import typing statistics from a previously exported JSON file"
+        >
+          📥 Import Data
+        </button>
+        <input
+          type="file"
+          id="import-file"
+          accept=".json"
+          style="display: none"
+          aria-label="Select JSON file to import"
+        />
+      </div>
     </div>
 
-    <div id="keyboard-container" class="keyboard-container" role="img" aria-label="Visual keyboard layout with current key highlighted">
-        </div>
+    <div
+      id="keyboard-container"
+      class="keyboard-container"
+      role="img"
+      aria-label="Visual keyboard layout with current key highlighted"
+    ></div>
 
-    <div id="stats-container" class="stats-container hidden" role="region" aria-labelledby="toggle-stats">
-        <div id="stats-display" class="stats-display" role="article" aria-label="Detailed typing statistics">
-             </div>
+    <div
+      id="stats-container"
+      class="stats-container hidden"
+      role="region"
+      aria-labelledby="toggle-stats"
+    >
+      <div
+        id="stats-display"
+        class="stats-display"
+        role="article"
+        aria-label="Detailed typing statistics"
+      ></div>
     </div>
 
     <script type="module" src="js/app.js"></script>
-
-</body>
+  </body>
 </html>

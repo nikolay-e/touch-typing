@@ -72,7 +72,7 @@ jobs:
         run: |
           # Get the SHA tag from the metadata
           SHA_TAG=$(echo "${{ steps.meta.outputs.tags }}" | grep -E "main-[a-f0-9]+" | head -1 | cut -d: -f2)
-          
+
           helm upgrade --install touch-typing ./helm/touch-typing \
             --namespace touch-typing \
             --create-namespace \
