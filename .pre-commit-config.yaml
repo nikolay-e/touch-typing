@@ -25,3 +25,12 @@ repos:
     rev: v8.21.2
     hooks:
       - id: gitleaks
+
+  - repo: local
+    hooks:
+      - id: jscpd
+        name: Copy-paste detection (jscpd)
+        entry: npx jscpd --min-lines 6 --min-tokens 50 --threshold 0 src/
+        language: system
+        files: \.(js|html|css)$
+        pass_filenames: false
