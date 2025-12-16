@@ -1,5 +1,7 @@
 # touch-typing
 
+> Extends [../CLAUDE.md](../CLAUDE.md)
+
 Touch typing practice app supporting English and Russian keyboards.
 
 ## Tech Stack
