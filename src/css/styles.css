@@ -598,3 +598,27 @@ body {
     min-height: 50px;
   }
 }
+
+/* App footer with version */
+.app-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  text-align: center;
+  padding: 0.5rem;
+  background: var(--container-bg);
+  border-top: 1px solid var(--border-color);
+  opacity: 0.6;
+  transition: opacity 0.2s ease;
+}
+
+.app-footer:hover {
+  opacity: 1;
+}
+
+.version-text {
+  font-family: monospace;
+  font-size: 0.75rem;
+  color: var(--text-color);
+}

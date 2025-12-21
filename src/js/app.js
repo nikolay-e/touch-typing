@@ -3,6 +3,7 @@ import * as config from "./config.js";
 import { TIMING_CONSTANTS } from "./config.js";
 import * as stats from "./stats.js";
 import * as ui from "./ui.js";
+import { APP_VERSION } from "./version.js";
 
 // --- Global Error Handler ---
 window.addEventListener("error", (event) => {
@@ -796,6 +797,12 @@ function initializeApp() {
     } else {
       // If updateTrainingSet resulted in empty set initially (shouldn't happen with fallbacks)
       ui.updateDisplayAndHighlight(null, 0, false, config.keyMap);
+    }
+
+    // Display version in footer
+    const versionElement = document.getElementById("app-version");
+    if (versionElement) {
+      versionElement.textContent = `v${APP_VERSION}`;
     }
 
     console.log("App Initialized Successfully.");
