@@ -1,0 +1,70 @@
+# Git
+.git
+.gitignore
+.gitattributes
+.github/
+
+# Dependencies
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Build outputs (not needed - src copied directly)
+dist/
+build/
+coverage/
+.nyc_output/
+
+# IDE and editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Documentation (not needed in image)
+*.md
+!README.md
+docs/
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Secrets and environment
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*id_rsa*
+*id_ed25519*
+credentials.json
+secrets.json
+.secrets.baseline
+
+# CI/CD and development tools
+.pre-commit-config.yaml
+renovate.json
+
+# Claude AI tools
+.claude/
+
+# Tree mapper output
+tree.tmp
+directory_tree.yaml
+
+# Docker files (prevent recursive inclusion)
+Dockerfile
+.dockerignore
+docker-compose.yml
+docker-compose.*.yml
