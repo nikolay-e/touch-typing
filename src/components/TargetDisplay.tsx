@@ -37,9 +37,7 @@ export function TargetDisplay({ target, position, result }: TargetDisplayProps) 
         aria-live="polite"
       >
         {result?.correct ? (
-          <span className="text-green-600 dark:text-green-400">
-            Correct! ({result.time}ms)
-          </span>
+          <span className="text-green-600 dark:text-green-400">Correct! ({result.time}ms)</span>
         ) : result ? (
           <span className="text-red-600 dark:text-red-400">Incorrect</span>
         ) : null}

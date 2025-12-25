@@ -32,6 +32,7 @@ src/
 ├── components/     # React components
 │   ├── Keyboard.tsx
 │   ├── TargetDisplay.tsx
+│   ├── TextDisplay.tsx
 │   ├── StatsPanel.tsx
 │   ├── ModeSelector.tsx
 │   └── SettingsBar.tsx
@@ -49,7 +50,8 @@ src/
 ## Features
 
 - Practice modes: lowercase, uppercase, numbers, special chars
-- N-gram modes: bigrams, trigrams, tetragrams, pentagrams
+- N-gram modes: bigrams, trigrams, tetragrams, pentagrams, hexagrams
+- Text mode: generates pseudo-natural text from n-gram Markov chains
 - Real-time stats: WPM, accuracy, response time
 - Visual keyboard with key highlighting
 - English (QWERTY) and Russian (ЙЦУКЕН) layouts

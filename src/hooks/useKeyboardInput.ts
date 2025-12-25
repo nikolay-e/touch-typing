@@ -5,7 +5,7 @@ interface KeyboardInputResult {
   pressedKey: string | null
 }
 
-export function useKeyboardInput(onKeyPress: (key: string, code: string) => void): KeyboardInputResult {
+export function useKeyboardInput(onKeyPress: (key: string) => void): KeyboardInputResult {
   const [pressedCode, setPressedCode] = useState<string | null>(null)
   const [pressedKey, setPressedKey] = useState<string | null>(null)
 
@@ -20,7 +20,7 @@ export function useKeyboardInput(onKeyPress: (key: string, code: string) => void
       if (event.key.length === 1 || event.key === ' ') {
         setPressedCode(event.code)
         setPressedKey(event.key)
-        onKeyPress(event.key, event.code)
+        onKeyPress(event.key)
 
         setTimeout(() => {
           setPressedCode(null)

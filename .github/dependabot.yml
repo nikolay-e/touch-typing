@@ -1,29 +1,29 @@
 version: 2
 updates:
   # Docker base images
-  - package-ecosystem: "docker"
-    directory: "/"
+  - package-ecosystem: 'docker'
+    directory: '/'
     schedule:
-      interval: "daily"
+      interval: 'daily'
     labels:
-      - "dependencies"
-      - "docker"
+      - 'dependencies'
+      - 'docker'
     commit-message:
-      prefix: "deps"
-      include: "scope"
+      prefix: 'deps'
+      include: 'scope'
 
   # GitHub Actions
-  - package-ecosystem: "github-actions"
-    directory: "/"
+  - package-ecosystem: 'github-actions'
+    directory: '/'
     schedule:
-      interval: "daily"
+      interval: 'daily'
     labels:
-      - "dependencies"
-      - "github-actions"
+      - 'dependencies'
+      - 'github-actions'
     commit-message:
-      prefix: "deps"
-      include: "scope"
+      prefix: 'deps'
+      include: 'scope'
     groups:
       github-actions:
         patterns:
-          - "*"
+          - '*'

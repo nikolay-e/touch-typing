@@ -38,7 +38,8 @@ export const useStatsStore = create<StatsState>()(
       characters: {},
       sessions: [],
 
-      startSession: () => set({ sessionStartTime: Date.now(), correctCount: 0, totalCount: 0, totalTime: 0 }),
+      startSession: () =>
+        set({ sessionStartTime: Date.now(), correctCount: 0, totalCount: 0, totalTime: 0 }),
 
       recordKeypress: (char, correct, responseTime, typedChar) => {
         set((state) => {
@@ -52,9 +53,13 @@ export const useStatsStore = create<StatsState>()(
             incorrect: charStats.incorrect + (correct ? 0 : 1),
             totalTime: charStats.totalTime + responseTime,
             timingSamples: newTimingSamples,
-            confusedWith: !correct && typedChar
-              ? { ...charStats.confusedWith, [typedChar]: (charStats.confusedWith[typedChar] ?? 0) + 1 }
-              : charStats.confusedWith,
+            confusedWith:
+              !correct && typedChar
+                ? {
+                    ...charStats.confusedWith,
+                    [typedChar]: (charStats.confusedWith[typedChar] ?? 0) + 1,
+                  }
+                : charStats.confusedWith,
           }
 
           return {
@@ -86,13 +91,14 @@ export const useStatsStore = create<StatsState>()(
         set((s) => ({ sessions: [...s.sessions, session].slice(-100) }))
       },
 
-      resetSession: () => set({ sessionStartTime: 0, correctCount: 0, totalCount: 0, totalTime: 0 }),
+      resetSession: () =>
+        set({ sessionStartTime: 0, correctCount: 0, totalCount: 0, totalTime: 0 }),
 
       getWpm: () => {
         const { correctCount, sessionStartTime } = get()
         if (sessionStartTime === 0) return 0
         const elapsedMinutes = Math.max((Date.now() - sessionStartTime) / 60000, 0.005)
-        return Math.round((correctCount / 5) / elapsedMinutes)
+        return Math.round(correctCount / 5 / elapsedMinutes)
       },
 
       getAccuracy: () => {
@@ -109,12 +115,19 @@ export const useStatsStore = create<StatsState>()(
 
       exportData: () => {
         const { characters, sessions } = get()
-        return JSON.stringify({ version: '2.0.0', characters, sessions, exportedAt: new Date().toISOString() }, null, 2)
+        return JSON.stringify(
+          { version: '2.0.0', characters, sessions, exportedAt: new Date().toISOString() },
+          null,
+          2
+        )
       },
 
       importData: (json, merge) => {
         try {
-          const data = JSON.parse(json) as { characters?: Record<string, CharacterStats>; sessions?: SessionStats[] }
+          const data = JSON.parse(json) as {
+            characters?: Record<string, CharacterStats>
+            sessions?: SessionStats[]
+          }
           if (!data.characters && !data.sessions) return false
 
           if (merge) {
@@ -149,7 +162,8 @@ export const useStatsStore = create<StatsState>()(
         }
       },
 
-      clearAllData: () => set({ characters: {}, sessions: [], correctCount: 0, totalCount: 0, totalTime: 0 }),
+      clearAllData: () =>
+        set({ characters: {}, sessions: [], correctCount: 0, totalCount: 0, totalTime: 0 }),
     }),
     {
       name: STORAGE_KEY,

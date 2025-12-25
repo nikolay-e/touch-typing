@@ -56,17 +56,21 @@ export function StatsPanel({ showDetailed = false }: StatsPanelProps) {
               </tr>
             </thead>
             <tbody>
-              {sortedChars.slice(0, 20).map(({ char, accuracy: acc, avgTime: avg, total, confusedWith }) => (
-                <tr key={char} className="border-b dark:border-gray-800">
-                  <td className="py-2 px-3 font-mono text-lg">{char}</td>
-                  <td className={`text-right py-2 px-3 ${acc < 80 ? 'text-red-500' : acc < 95 ? 'text-yellow-500' : 'text-green-500'}`}>
-                    {acc}%
-                  </td>
-                  <td className="text-right py-2 px-3">{avg}ms</td>
-                  <td className="text-right py-2 px-3">{total}</td>
-                  <td className="py-2 px-3 font-mono text-gray-500">{confusedWith || '-'}</td>
-                </tr>
-              ))}
+              {sortedChars
+                .slice(0, 20)
+                .map(({ char, accuracy: acc, avgTime: avg, total, confusedWith }) => (
+                  <tr key={char} className="border-b dark:border-gray-800">
+                    <td className="py-2 px-3 font-mono text-lg">{char}</td>
+                    <td
+                      className={`text-right py-2 px-3 ${acc < 80 ? 'text-red-500' : acc < 95 ? 'text-yellow-500' : 'text-green-500'}`}
+                    >
+                      {acc}%
+                    </td>
+                    <td className="text-right py-2 px-3">{avg}ms</td>
+                    <td className="text-right py-2 px-3">{total}</td>
+                    <td className="py-2 px-3 font-mono text-gray-500">{confusedWith || '-'}</td>
+                  </tr>
+                ))}
             </tbody>
           </table>
         </div>
@@ -76,21 +80,24 @@ export function StatsPanel({ showDetailed = false }: StatsPanelProps) {
         <div className="mt-6">
           <h3 className="text-lg font-semibold mb-3">Recent Sessions</h3>
           <div className="space-y-2">
-            {sessions.slice(-5).reverse().map((session) => (
-              <div
-                key={session.id}
-                className="flex justify-between items-center p-3 bg-gray-100 dark:bg-gray-800 rounded-lg"
-              >
-                <div className="text-sm text-gray-500">
-                  {new Date(session.startTime).toLocaleDateString()}
+            {sessions
+              .slice(-5)
+              .reverse()
+              .map((session) => (
+                <div
+                  key={session.id}
+                  className="flex justify-between items-center p-3 bg-gray-100 dark:bg-gray-800 rounded-lg"
+                >
+                  <div className="text-sm text-gray-500">
+                    {new Date(session.startTime).toLocaleDateString()}
+                  </div>
+                  <div className="flex gap-4 text-sm">
+                    <span className="text-blue-600 dark:text-blue-400">{session.wpm} WPM</span>
+                    <span className="text-green-600 dark:text-green-400">{session.accuracy}%</span>
+                    <span className="text-gray-500">{session.totalCount} keys</span>
+                  </div>
                 </div>
-                <div className="flex gap-4 text-sm">
-                  <span className="text-blue-600 dark:text-blue-400">{session.wpm} WPM</span>
-                  <span className="text-green-600 dark:text-green-400">{session.accuracy}%</span>
-                  <span className="text-gray-500">{session.totalCount} keys</span>
-                </div>
-              </div>
-            ))}
+              ))}
           </div>
         </div>
       )}

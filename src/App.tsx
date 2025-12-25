@@ -38,6 +38,7 @@ export default function App() {
 
   useEffect(() => {
     setTheme(theme)
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- Apply persisted theme on mount only
   }, [])
 
   useEffect(() => {
@@ -45,7 +46,7 @@ export default function App() {
   }, [language, activeModes, initTarget])
 
   const handleKeyPress = useCallback(
-    (key: string, _code: string) => {
+    (key: string) => {
       const now = performance.now()
       const responseTime = lastKeyTime > 0 ? Math.round(now - lastKeyTime) : 0
 
@@ -111,27 +112,16 @@ export default function App() {
 
       <main id="main" className="flex-1 container mx-auto px-4 pb-8 space-y-8 max-w-4xl">
         {isTextMode ? (
-          <TextDisplay
-            text={currentTarget}
-            position={sequencePosition}
-            result={result}
-          />
+          <TextDisplay text={currentTarget} position={sequencePosition} result={result} />
         ) : (
-          <TargetDisplay
-            target={currentTarget}
-            position={sequencePosition}
-            result={result}
-          />
+          <TargetDisplay target={currentTarget} position={sequencePosition} result={result} />
         )}
 
         <StatsPanel />
 
         <ModeSelector />
 
-        <SettingsBar
-          showStats={showStats}
-          onToggleStats={() => setShowStats((s) => !s)}
-        />
+        <SettingsBar showStats={showStats} onToggleStats={() => setShowStats((s) => !s)} />
 
         <Keyboard
           language={language}
@@ -147,9 +137,7 @@ export default function App() {
         )}
       </main>
 
-      <footer className="py-4 text-center text-sm text-gray-500 dark:text-gray-400">
-        v2.1.0
-      </footer>
+      <footer className="py-4 text-center text-sm text-gray-500 dark:text-gray-400">v2.1.0</footer>
     </div>
   )
 }

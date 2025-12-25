@@ -24,16 +24,21 @@ export function ModeSelector() {
 
   return (
     <div className="space-y-3">
-      <div className="flex flex-wrap gap-2 justify-center" role="group" aria-label="Character modes">
+      <div
+        className="flex flex-wrap gap-2 justify-center"
+        role="group"
+        aria-label="Character modes"
+      >
         {charModes.map((mode) => (
           <button
             key={mode.id}
             onClick={() => toggleMode(mode.id)}
             className={`
               px-4 py-2 rounded-lg text-sm font-medium transition-all
-              ${activeModes.includes(mode.id)
-                ? 'bg-blue-600 text-white shadow-md'
-                : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+              ${
+                activeModes.includes(mode.id)
+                  ? 'bg-blue-600 text-white shadow-md'
+                  : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
               }
             `}
             aria-pressed={activeModes.includes(mode.id)}
@@ -50,9 +55,10 @@ export function ModeSelector() {
             onClick={() => toggleMode(mode.id)}
             className={`
               px-4 py-2 rounded-lg text-sm font-medium transition-all
-              ${activeModes.includes(mode.id)
-                ? 'bg-purple-600 text-white shadow-md'
-                : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+              ${
+                activeModes.includes(mode.id)
+                  ? 'bg-purple-600 text-white shadow-md'
+                  : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
               }
             `}
             aria-pressed={activeModes.includes(mode.id)}
@@ -66,9 +72,10 @@ export function ModeSelector() {
             onClick={() => toggleMode(mode.id)}
             className={`
               px-4 py-2 rounded-lg text-sm font-medium transition-all
-              ${activeModes.includes(mode.id)
-                ? 'bg-green-600 text-white shadow-md'
-                : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+              ${
+                activeModes.includes(mode.id)
+                  ? 'bg-green-600 text-white shadow-md'
+                  : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
               }
             `}
             aria-pressed={activeModes.includes(mode.id)}

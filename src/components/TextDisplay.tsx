@@ -1,3 +1,5 @@
+import { useMemo } from 'react'
+
 interface TextDisplayProps {
   text: string
   position: number
@@ -5,10 +7,16 @@ interface TextDisplayProps {
 }
 
 export function TextDisplay({ text, position, result }: TextDisplayProps) {
-  const words = text.split(' ')
-  let charIndex = 0
-
   const progress = text.length > 0 ? Math.round((position / text.length) * 100) : 0
+
+  const wordsWithOffsets = useMemo(() => {
+    const words = text.split(' ')
+    return words.reduce<{ word: string; start: number }[]>((acc, word, idx) => {
+      const start = idx === 0 ? 0 : acc[idx - 1]!.start + acc[idx - 1]!.word.length + 1
+      acc.push({ word, start })
+      return acc
+    }, [])
+  }, [text])
 
   return (
     <div className="text-center space-y-4">
@@ -28,42 +36,38 @@ export function TextDisplay({ text, position, result }: TextDisplayProps) {
         role="status"
         aria-live="polite"
       >
-        {words.map((word, wordIdx) => {
-          const wordStart = charIndex
-          charIndex += word.length + 1
-
-          return (
-            <span
-              key={wordIdx}
-              className={`
-                px-2 py-1 rounded transition-colors duration-100
-                ${position >= wordStart && position < wordStart + word.length
+        {wordsWithOffsets.map(({ word, start: wordStart }, wordIdx) => (
+          <span
+            key={wordIdx}
+            className={`
+              px-2 py-1 rounded transition-colors duration-100
+              ${
+                position >= wordStart && position < wordStart + word.length
                   ? 'bg-blue-100 dark:bg-blue-900'
                   : ''
-                }
-              `}
-            >
-              {word.split('').map((char, charIdx) => {
-                const absoluteIdx = wordStart + charIdx
-                const isTyped = absoluteIdx < position
-                const isCurrent = absoluteIdx === position
+              }
+            `}
+          >
+            {word.split('').map((char, charIdx) => {
+              const absoluteIdx = wordStart + charIdx
+              const isTyped = absoluteIdx < position
+              const isCurrent = absoluteIdx === position
 
-                return (
-                  <span
-                    key={charIdx}
-                    className={`
-                      ${isTyped ? 'text-green-600 dark:text-green-400' : ''}
-                      ${isCurrent ? 'bg-yellow-200 dark:bg-yellow-700 text-gray-900 dark:text-gray-100 px-0.5 rounded' : ''}
-                      ${!isTyped && !isCurrent ? 'text-gray-500 dark:text-gray-400' : ''}
-                    `}
-                  >
-                    {char}
-                  </span>
-                )
-              })}
-            </span>
-          )
-        })}
+              return (
+                <span
+                  key={charIdx}
+                  className={`
+                    ${isTyped ? 'text-green-600 dark:text-green-400' : ''}
+                    ${isCurrent ? 'bg-yellow-200 dark:bg-yellow-700 text-gray-900 dark:text-gray-100 px-0.5 rounded' : ''}
+                    ${!isTyped && !isCurrent ? 'text-gray-500 dark:text-gray-400' : ''}
+                  `}
+                >
+                  {char}
+                </span>
+              )
+            })}
+          </span>
+        ))}
       </div>
 
       <div
@@ -75,9 +79,7 @@ export function TextDisplay({ text, position, result }: TextDisplayProps) {
         aria-live="polite"
       >
         {result?.correct ? (
-          <span className="text-green-600 dark:text-green-400">
-            Correct! ({result.time}ms)
-          </span>
+          <span className="text-green-600 dark:text-green-400">Correct! ({result.time}ms)</span>
         ) : result ? (
           <span className="text-red-600 dark:text-red-400">Incorrect</span>
         ) : null}
