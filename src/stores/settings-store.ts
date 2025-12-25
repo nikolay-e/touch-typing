@@ -6,9 +6,11 @@ interface SettingsState {
   language: Language
   activeModes: PracticeMode[]
   theme: 'light' | 'dark' | 'system'
+  adaptiveLearning: boolean
   setLanguage: (language: Language) => void
   toggleMode: (mode: PracticeMode) => void
   setTheme: (theme: 'light' | 'dark' | 'system') => void
+  setAdaptiveLearning: (enabled: boolean) => void
 }
 
 export const useSettingsStore = create<SettingsState>()(
@@ -17,6 +19,7 @@ export const useSettingsStore = create<SettingsState>()(
       language: 'english',
       activeModes: ['lowercase'],
       theme: 'system',
+      adaptiveLearning: true,
 
       setLanguage: (language) => set({ language }),
 
@@ -35,6 +38,8 @@ export const useSettingsStore = create<SettingsState>()(
         document.documentElement.classList.toggle('dark', isDark)
         set({ theme })
       },
+
+      setAdaptiveLearning: (enabled) => set({ adaptiveLearning: enabled }),
     }),
     {
       name: 'touch-typing-settings',
@@ -42,6 +47,7 @@ export const useSettingsStore = create<SettingsState>()(
         language: state.language,
         activeModes: state.activeModes,
         theme: state.theme,
+        adaptiveLearning: state.adaptiveLearning,
       }),
     }
   )

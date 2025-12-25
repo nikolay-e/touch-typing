@@ -12,6 +12,8 @@ export function SettingsBar({ onToggleStats, showStats }: SettingsBarProps) {
   const setLanguage = useSettingsStore((s) => s.setLanguage)
   const theme = useSettingsStore((s) => s.theme)
   const setTheme = useSettingsStore((s) => s.setTheme)
+  const adaptiveLearning = useSettingsStore((s) => s.adaptiveLearning)
+  const setAdaptiveLearning = useSettingsStore((s) => s.setAdaptiveLearning)
   const exportData = useStatsStore((s) => s.exportData)
   const importData = useStatsStore((s) => s.importData)
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -83,6 +85,22 @@ export function SettingsBar({ onToggleStats, showStats }: SettingsBarProps) {
         aria-label={`Current theme: ${theme}. Click to change.`}
       >
         {themeIcon}
+      </button>
+
+      <button
+        onClick={() => setAdaptiveLearning(!adaptiveLearning)}
+        className={`
+          px-4 py-2 rounded-lg transition-colors font-medium
+          ${
+            adaptiveLearning
+              ? 'bg-purple-600 text-white'
+              : 'bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600'
+          }
+        `}
+        aria-pressed={adaptiveLearning}
+        title="Adaptive learning focuses on characters you struggle with"
+      >
+        🎯 Adaptive
       </button>
 
       <button

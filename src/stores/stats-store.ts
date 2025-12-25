@@ -2,6 +2,13 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import type { CharacterStats, SessionStats, Language, PracticeMode } from '@/types'
 
+interface CharacterWeight {
+  char: string
+  weight: number
+  accuracy: number
+  avgTime: number
+}
+
 interface StatsState {
   sessionStartTime: number
   correctCount: number
@@ -17,6 +24,9 @@ interface StatsState {
   getWpm: () => number
   getAccuracy: () => number
   getAverageTime: () => number
+  getCharacterWeight: (char: string) => number
+  getCharacterWeights: (chars: string[]) => CharacterWeight[]
+  getConfusionPairs: (char: string) => string[]
   exportData: () => string
   importData: (json: string, merge: boolean) => boolean
   clearAllData: () => void
@@ -111,6 +121,60 @@ export const useStatsStore = create<StatsState>()(
         const { totalTime, totalCount } = get()
         if (totalCount === 0) return 0
         return Math.round(totalTime / totalCount)
+      },
+
+      getCharacterWeight: (char: string) => {
+        const stats = get().characters[char]
+        if (!stats || stats.total < 3) return 1.0
+
+        const accuracy = stats.correct / stats.total
+        const errorRate = 1 - accuracy
+
+        // Weight formula: higher weight = more practice needed
+        // Base weight 1.0, increases with error rate (max 3x for 0% accuracy)
+        return 1.0 + errorRate * 2.0
+      },
+
+      getCharacterWeights: (chars: string[]) => {
+        const { characters } = get()
+        const allTimes: number[] = []
+
+        for (const char of chars) {
+          const stats = characters[char]
+          if (stats && stats.total > 0) {
+            allTimes.push(stats.totalTime / stats.total)
+          }
+        }
+
+        const avgTime =
+          allTimes.length > 0 ? allTimes.reduce((a, b) => a + b, 0) / allTimes.length : 200
+
+        return chars.map((char) => {
+          const stats = characters[char]
+          if (!stats || stats.total < 3) {
+            return { char, weight: 1.0, accuracy: 1.0, avgTime: 0 }
+          }
+
+          const accuracy = stats.correct / stats.total
+          const charAvgTime = stats.totalTime / stats.total
+          const errorRate = 1 - accuracy
+          const slownessFactor = Math.max(0, (charAvgTime - avgTime) / avgTime)
+
+          // Combined weight: 60% accuracy, 40% speed
+          const weight = 1.0 + errorRate * 2.0 + slownessFactor * 0.5
+
+          return { char, weight, accuracy, avgTime: charAvgTime }
+        })
+      },
+
+      getConfusionPairs: (char: string) => {
+        const stats = get().characters[char]
+        if (!stats || Object.keys(stats.confusedWith).length === 0) return []
+
+        return Object.entries(stats.confusedWith)
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 3)
+          .map(([confusedChar]) => confusedChar)
       },
 
       exportData: () => {
