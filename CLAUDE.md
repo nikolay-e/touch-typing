@@ -6,15 +6,19 @@ Touch typing practice app supporting English and Russian keyboards.
 
 ## Tech Stack
 
-- Vanilla JavaScript (ES6+), HTML5, CSS3
-- No build process (static files)
+- React 19, TypeScript, Vite 6
+- Zustand for state management
+- Tailwind CSS v4
 - nginx Docker container
 
 ## Commands
 
 ```bash
-# Local dev
-cd src && python -m http.server 8000
+npm run dev      # Development server
+npm run build    # Production build
+npm run preview  # Preview production build
+npm run lint     # ESLint check
+npm run format   # Prettier format
 
 # Docker
 docker build -t touch-typing .
@@ -25,22 +29,34 @@ docker run -p 8080:80 touch-typing
 
 ```
 src/
-├── index.html
-├── css/styles.css
-└── js/
-    ├── app.js      # Main logic
-    ├── config.js   # Constants
-    ├── stats.js    # Statistics
-    └── ui.js       # UI management
+├── components/     # React components
+│   ├── Keyboard.tsx
+│   ├── TargetDisplay.tsx
+│   ├── StatsPanel.tsx
+│   ├── ModeSelector.tsx
+│   └── SettingsBar.tsx
+├── stores/         # Zustand stores
+│   ├── settings-store.ts
+│   ├── typing-store.ts
+│   └── stats-store.ts
+├── config/         # Keyboard layouts, character sets
+├── hooks/          # Custom hooks
+├── types/          # TypeScript types
+├── App.tsx
+└── main.tsx
 ```
 
 ## Features
 
-- Practice modes: letters, bigrams, words, sentences
+- Practice modes: lowercase, uppercase, numbers, special chars
+- N-gram modes: bigrams, trigrams, tetragrams, pentagrams
 - Real-time stats: WPM, accuracy, response time
-- Visual keyboard with highlighting
+- Visual keyboard with key highlighting
+- English (QWERTY) and Russian (ЙЦУКЕН) layouts
 - Data export/import (JSON)
-- Dark mode, accessibility (ARIA)
+- Dark mode with system preference detection
+- Accessible (ARIA labels, keyboard navigation)
+- Persistent statistics via localStorage
 
 ## Deployment
 

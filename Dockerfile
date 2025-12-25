@@ -1,12 +1,34 @@
+FROM node:22-alpine AS builder
+
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci
+COPY . .
+RUN npm run build
+
 FROM nginx:alpine
 
-ARG GIT_SHA=0.0.0-placeholder
+COPY --from=builder /app/dist /usr/share/nginx/html
+COPY <<EOF /etc/nginx/conf.d/default.conf
+server {
+    listen 80;
+    server_name localhost;
+    root /usr/share/nginx/html;
+    index index.html;
 
-COPY src/ /usr/share/nginx/html/
+    location / {
+        try_files \$uri \$uri/ /index.html;
+    }
 
-RUN find /usr/share/nginx/html -type f \( -name '*.js' -o -name '*.json' -o -name '*.html' \) -exec \
-    sed -i "s/0\.0\.0-placeholder/${GIT_SHA}/g" {} +
+    location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2)$ {
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+    }
+
+    gzip on;
+    gzip_types text/plain text/css application/json application/javascript text/xml application/xml;
+}
+EOF
 
 EXPOSE 80
-
 CMD ["nginx", "-g", "daemon off;"]

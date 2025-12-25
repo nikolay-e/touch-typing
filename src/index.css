@@ -1,0 +1,52 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-key-bg: #e5e7eb;
+  --color-key-bg-dark: #374151;
+  --color-key-highlight: #22c55e;
+  --color-key-error: #ef4444;
+  --color-key-pressed: #3b82f6;
+
+  --animate-shake: shake 0.3s ease-in-out;
+  --animate-press: press 0.1s ease-out;
+
+  @keyframes shake {
+    0%,
+    100% {
+      transform: translateX(0);
+    }
+    25% {
+      transform: translateX(-4px);
+    }
+    75% {
+      transform: translateX(4px);
+    }
+  }
+
+  @keyframes press {
+    0% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(2px);
+    }
+    100% {
+      transform: translateY(0);
+    }
+  }
+}
+
+@layer base {
+  html {
+    @apply antialiased;
+  }
+
+  body {
+    @apply bg-gray-100 text-gray-900 dark:bg-gray-900 dark:text-gray-100;
+    @apply min-h-screen transition-colors duration-200;
+  }
+
+  *:focus-visible {
+    @apply outline-2 outline-offset-2 outline-blue-500;
+  }
+}
