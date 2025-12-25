@@ -13,11 +13,11 @@ export function useKeyboardInput(onKeyPress: (key: string, code: string) => void
     (event: KeyboardEvent) => {
       if (event.target !== document.body) return
       if (event.ctrlKey || event.altKey || event.metaKey) return
-      if (event.key.length !== 1 && event.key !== 'Shift') return
+      if (event.key.length !== 1 && event.key !== ' ' && event.key !== 'Shift') return
 
       event.preventDefault()
 
-      if (event.key.length === 1) {
+      if (event.key.length === 1 || event.key === ' ') {
         setPressedCode(event.code)
         setPressedKey(event.key)
         onKeyPress(event.key, event.code)

@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from 'react'
 import { Keyboard } from '@/components/Keyboard'
 import { TargetDisplay } from '@/components/TargetDisplay'
+import { TextDisplay } from '@/components/TextDisplay'
 import { StatsPanel } from '@/components/StatsPanel'
 import { ModeSelector } from '@/components/ModeSelector'
 import { SettingsBar } from '@/components/SettingsBar'
@@ -32,6 +33,8 @@ export default function App() {
   const [showStats, setShowStats] = useState(false)
   const [result, setResult] = useState<{ correct: boolean; time: number } | null>(null)
   const [isError, setIsError] = useState(false)
+
+  const isTextMode = activeModes.includes('text')
 
   useEffect(() => {
     setTheme(theme)
@@ -107,11 +110,19 @@ export default function App() {
       </header>
 
       <main id="main" className="flex-1 container mx-auto px-4 pb-8 space-y-8 max-w-4xl">
-        <TargetDisplay
-          target={currentTarget}
-          position={sequencePosition}
-          result={result}
-        />
+        {isTextMode ? (
+          <TextDisplay
+            text={currentTarget}
+            position={sequencePosition}
+            result={result}
+          />
+        ) : (
+          <TargetDisplay
+            target={currentTarget}
+            position={sequencePosition}
+            result={result}
+          />
+        )}
 
         <StatsPanel />
 
@@ -137,7 +148,7 @@ export default function App() {
       </main>
 
       <footer className="py-4 text-center text-sm text-gray-500 dark:text-gray-400">
-        v2.0.0
+        v2.1.0
       </footer>
     </div>
   )

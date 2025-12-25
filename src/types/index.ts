@@ -9,6 +9,8 @@ export type PracticeMode =
   | 'trigrams'
   | 'tetragrams'
   | 'pentagrams'
+  | 'hexagrams'
+  | 'text'
 
 export interface CharacterStats {
   total: number
