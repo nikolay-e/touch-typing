@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { subscribeWithSelector } from 'zustand/middleware'
 import { getCharacterSet } from '@/config/character-sets'
 import { useStatsStore } from '@/stores/stats-store'
 import { useSettingsStore } from '@/stores/settings-store'
@@ -9,13 +10,17 @@ interface TypingState {
   sequencePosition: number
   lastKeyTime: number
   recentTargets: string[]
+}
 
+interface TypingActions {
   initTarget: (language: Language, modes: PracticeMode[]) => void
   nextTarget: (language: Language, modes: PracticeMode[]) => void
   advanceSequence: () => boolean
   resetSequence: () => void
   setLastKeyTime: (time: number) => void
 }
+
+type TypingStore = TypingState & TypingActions
 
 function selectWeightedRandom(items: { char: string; weight: number }[]): string {
   const totalWeight = items.reduce((sum, item) => sum + item.weight, 0)
@@ -57,7 +62,8 @@ function selectSmartTarget(chars: string[], recentTargets: string[], useAdaptive
   return selectWeightedRandom(allWeights)
 }
 
-export const useTypingStore = create<TypingState>()((set, get) => ({
+export const useTypingStore = create<TypingStore>()(
+  subscribeWithSelector((set, get) => ({
   currentTarget: '',
   sequencePosition: 0,
   lastKeyTime: 0,
@@ -91,4 +97,14 @@ export const useTypingStore = create<TypingState>()((set, get) => ({
   resetSequence: () => set({ sequencePosition: 0 }),
 
   setLastKeyTime: (time) => set({ lastKeyTime: time }),
-}))
+  }))
+)
+
+export const useCurrentTarget = () => useTypingStore((s) => s.currentTarget)
+export const useSequencePosition = () => useTypingStore((s) => s.sequencePosition)
+export const useLastKeyTime = () => useTypingStore((s) => s.lastKeyTime)
+export const useRecentTargets = () => useTypingStore((s) => s.recentTargets)
+export const useCurrentChar = () =>
+  useTypingStore((s) => s.currentTarget[s.sequencePosition] ?? '')
+export const useIsSequenceComplete = () =>
+  useTypingStore((s) => s.sequencePosition >= s.currentTarget.length)

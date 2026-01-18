@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
+import { persist, subscribeWithSelector } from 'zustand/middleware'
 import type { CharacterStats, SessionStats, Language, PracticeMode } from '@/types'
 
 interface CharacterWeight {
@@ -16,7 +16,9 @@ interface StatsState {
   totalTime: number
   characters: Record<string, CharacterStats>
   sessions: SessionStats[]
+}
 
+interface StatsActions {
   startSession: () => void
   recordKeypress: (char: string, correct: boolean, responseTime: number, typedChar?: string) => void
   endSession: (language: Language, mode: PracticeMode) => void
@@ -32,15 +34,18 @@ interface StatsState {
   clearAllData: () => void
 }
 
+type StatsStore = StatsState & StatsActions
+
 const STORAGE_KEY = 'touch-typing-stats'
 
 function createEmptyCharStats(): CharacterStats {
   return { total: 0, correct: 0, incorrect: 0, totalTime: 0, confusedWith: {}, timingSamples: [] }
 }
 
-export const useStatsStore = create<StatsState>()(
-  persist(
-    (set, get) => ({
+export const useStatsStore = create<StatsStore>()(
+  subscribeWithSelector(
+    persist(
+      (set, get) => ({
       sessionStartTime: 0,
       correctCount: 0,
       totalCount: 0,
@@ -228,10 +233,18 @@ export const useStatsStore = create<StatsState>()(
 
       clearAllData: () =>
         set({ characters: {}, sessions: [], correctCount: 0, totalCount: 0, totalTime: 0 }),
-    }),
-    {
-      name: STORAGE_KEY,
-      partialize: (state) => ({ characters: state.characters, sessions: state.sessions }),
-    }
+      }),
+      {
+        name: STORAGE_KEY,
+        partialize: (state) => ({ characters: state.characters, sessions: state.sessions }),
+      }
+    )
   )
 )
+
+export const useSessionStartTime = () => useStatsStore((s) => s.sessionStartTime)
+export const useCorrectCount = () => useStatsStore((s) => s.correctCount)
+export const useTotalCount = () => useStatsStore((s) => s.totalCount)
+export const useTotalTime = () => useStatsStore((s) => s.totalTime)
+export const useCharacters = () => useStatsStore((s) => s.characters)
+export const useSessions = () => useStatsStore((s) => s.sessions)
